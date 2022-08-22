@@ -35,3 +35,20 @@ def test_create_train(client, test_trains, name):
     response = client.post('/api/v1/train/', json={"name": name})
     created_train = schemas.TrainCreate(**response.json())
     assert created_train.name == name
+
+
+def test_update_train(client, test_trains):
+    data = {
+        "name": "testTrain",
+    }
+    response = client.post('/api/v1/train/', json=data)
+    updated_train = schemas.TrainUpdate(**response.json())
+    assert updated_train.name == "testTrain"
+    assert response.status_code == 200
+
+
+def test_delete_train(client, test_trains):
+    res = client.delete(
+        f"/api/v1/train/{test_trains[1].id}"
+    )
+    assert res.status_code == 204
