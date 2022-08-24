@@ -54,6 +54,12 @@ class SMGS:
         db.commit()
 
     @classmethod
+    def delete_train_all_smgs(cls, pk: int, db: Session = Depends(get_db)):
+        smgs_query = db.query(cls.model).filter(cls.model.train_id == pk)
+        smgs_query.delete(synchronize_session=False)
+        db.commit()
+
+    @classmethod
     def update_smgs(cls, pk: int, updated_smgs: dict, db: Session = Depends(get_db)):
         smgs_query = db.query(cls.model).filter(cls.model.id == pk)
         smgs_query.update(updated_smgs, synchronize_session=False)

@@ -38,6 +38,17 @@ async def get_smgs_by_train(pk: int, db: Session = Depends(get_db)):
     return smgs_list
 
 
+@router.get('/train_name/{name}', response_model=List[schemas.SMGSOut], status_code=status.HTTP_200_OK)
+async def get_smgs_by_train_name(name: str, db: Session = Depends(get_db)):
+    train = Train.get_train_by_name(name=name, db=db)
+    if train is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f'Train with {name} does not exist')
+
+    smgs_list = SMGS.get_smgs_list_by_train(pk=train.id, db=db)
+    return smgs_list
+
+
 @router.post('/', response_model=schemas.SMGSOut, status_code=status.HTTP_201_CREATED)
 async def create_smgs(smgs: schemas.SMGSCreate, db: Session = Depends(get_db)):
     smgs = smgs.copy().dict()
@@ -59,6 +70,17 @@ async def delete_smgs(pk: int, db: Session = Depends(get_db)):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
+@router.delete('/train_smgs/{pk}', status_code=status.HTTP_204_NO_CONTENT)
+async def delete_train_all_smgs(pk: int, db: Session = Depends(get_db)):
+    train = Train.get_train(pk=pk, db=db)
+    if train is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"Train {pk} not found"
+        )
+    SMGS.delete_train_all_smgs(pk, db)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
 @router.put('/{pk}', response_model=schemas.SMGSOut)
 async def update_smgs(pk: int, smgs: schemas.SMGSUpdate, db: Session = Depends(get_db)):
     train_id = smgs.dict().get('train_id')
@@ -72,5 +94,3 @@ async def update_smgs(pk: int, smgs: schemas.SMGSUpdate, db: Session = Depends(g
         )
     updated_smgs = SMGS.update_smgs(pk, smgs.dict(), db)
     return updated_smgs
-
-

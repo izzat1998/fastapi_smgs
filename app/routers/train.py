@@ -7,6 +7,7 @@ from starlette.exceptions import HTTPException
 from starlette.responses import Response
 
 from .. import schemas, models
+from ..crud.smgs_crud import SMGS
 from ..crud.train_crud import Train
 from ..database import get_db
 
@@ -22,7 +23,7 @@ async def get_train_list(limit: int = 100, skip: int = 0, search: Optional[str] 
     return train_list
 
 
-@router.get('/smgs_list',response_model=List[schemas.TrainWithSMGS])
+@router.get('/smgs_list', response_model=List[schemas.TrainWithSMGS])
 async def get_train_smgs_list(db: Session = Depends(get_db)):
     train_list = db.query(models.Train).all()
     for train in train_list:
@@ -69,3 +70,6 @@ async def delete_train(pk: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND, detail=f'Train with {pk} does not exist')
     Train.delete_train(pk=pk, db=db)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+
