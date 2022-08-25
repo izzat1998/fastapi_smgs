@@ -7,7 +7,6 @@ from starlette.exceptions import HTTPException
 from starlette.responses import Response
 
 from .. import schemas, models
-from ..crud.smgs_crud import SMGS
 from ..crud.train_crud import Train
 from ..database import get_db
 
@@ -27,7 +26,6 @@ async def get_train_list(limit: int = 100, skip: int = 0, search: Optional[str] 
 async def get_train_smgs_list(db: Session = Depends(get_db)):
     train_list = db.query(models.Train).all()
     for train in train_list:
-        # train.smgs_list = db.query(models.SMGS).filter(models.SMGS.train_id == train.id).all()
         train.smgs_list = db.query(models.SMGS).filter(models.SMGS.train_id == train.id).all()
     return train_list
 

@@ -38,17 +38,6 @@ async def get_smgs_by_train(pk: int, db: Session = Depends(get_db)):
     return smgs_list
 
 
-@router.get('/train_name/{name}', response_model=List[schemas.SMGSOut], status_code=status.HTTP_200_OK)
-async def get_smgs_by_train_name(name: str, db: Session = Depends(get_db)):
-    train = Train.get_train_by_name(name=name, db=db)
-    if train is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f'Train with {name} does not exist')
-
-    smgs_list = SMGS.get_smgs_list_by_train(pk=train.id, db=db)
-    return smgs_list
-
-
 @router.post('/', response_model=schemas.SMGSOut, status_code=status.HTTP_201_CREATED)
 async def create_smgs(smgs: schemas.SMGSCreate, db: Session = Depends(get_db)):
     smgs = smgs.copy().dict()

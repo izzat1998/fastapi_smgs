@@ -1,9 +1,18 @@
+import os
+import pathlib
+
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from app import models
 from ..database import get_db
 from ..utils.convert_excel_to_docx import SMGSDOCX
+
+
+def remove_file_from_disk(file_path: str) -> None:
+    if os.path.exists(file_path):
+        rem_file = pathlib.Path(file_path)
+        rem_file.unlink()
 
 
 class SMGS:
@@ -56,8 +65,13 @@ class SMGS:
     @classmethod
     def delete_train_all_smgs(cls, pk: int, db: Session = Depends(get_db)):
         smgs_query = db.query(cls.model).filter(cls.model.train_id == pk)
-        smgs_query.delete(synchronize_session=False)
-        db.commit()
+        for smgs in smgs_query.all():
+            original_file = os.path.abspath(os.path.join(os.path.basename(__file__), '../' + smgs.file_original))
+            draft_file = os.path.abspath(os.path.join(os.path.basename(__file__), '../' + smgs.file_draft))
+            remove_file_from_disk(original_file)
+            remove_file_from_disk(draft_file)
+            smgs_query.delete(synchronize_session=False)
+            db.commit()
 
     @classmethod
     def update_smgs(cls, pk: int, updated_smgs: dict, db: Session = Depends(get_db)):
