@@ -1,8 +1,10 @@
+import os
 from typing import Optional, List
 
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
+from .smgs_crud import remove_file_from_disk
 from .. import schemas, models
 from ..database import get_db
 
@@ -42,5 +44,11 @@ class Train:
     @classmethod
     def delete_train(cls, pk: int, db: Session = Depends(get_db)):
         train_query = db.query(cls.model).filter(cls.model.id == pk)
+        smgs_query = db.query(models.SMGS).filter(models.SMGS.train_id == train_query.first().id)
+        for smgs in smgs_query.all():
+            original_file = os.path.abspath(os.path.join(os.path.basename(__file__), '../' + smgs.file_original))
+            draft_file = os.path.abspath(os.path.join(os.path.basename(__file__), '../' + smgs.file_draft))
+            remove_file_from_disk(original_file)
+            remove_file_from_disk(draft_file)
         train_query.delete(synchronize_session=False)
         db.commit()
