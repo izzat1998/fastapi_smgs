@@ -3,19 +3,19 @@ import zipfile
 from io import BytesIO
 from typing import List, Optional
 
-import status as status
+
 from fastapi import APIRouter, Depends
-from h11._abnf import status_code
+
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.exceptions import HTTPException
 from starlette.responses import Response, StreamingResponse
 
 from .. import schemas, models
-from ..crud.smgs_crud import SMGS
+
 from ..crud.train_crud import Train
 from ..database import get_db
-from ..utils.utils import make_archive
+
 
 router = APIRouter(
     prefix='/api/v1/train',
