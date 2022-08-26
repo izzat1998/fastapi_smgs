@@ -85,6 +85,7 @@ class SMGSUpdate(SMGSBase):
 
 class TrainWithSMGS(TrainOut):
     smgs_list: List[SMGSTrain] = None
+    count: int = None
 
     class Config:
         orm_mode = True

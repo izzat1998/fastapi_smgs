@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app import models
 from ..database import get_db
-from ..utils.convert_excel_to_docx import SMGSDOCX
+from ..utils.utils import SMGSDOCX
 
 
 def remove_file_from_disk(file_path: str) -> None:

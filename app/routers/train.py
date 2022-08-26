@@ -1,14 +1,21 @@
+import os
+import zipfile
+from io import BytesIO
 from typing import List, Optional
 
+import status as status
 from fastapi import APIRouter, Depends
+from h11._abnf import status_code
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.exceptions import HTTPException
-from starlette.responses import Response
+from starlette.responses import Response, StreamingResponse
 
 from .. import schemas, models
+from ..crud.smgs_crud import SMGS
 from ..crud.train_crud import Train
 from ..database import get_db
+from ..utils.utils import make_archive
 
 router = APIRouter(
     prefix='/api/v1/train',
@@ -26,7 +33,9 @@ async def get_train_list(limit: int = 100, skip: int = 0, search: Optional[str] 
 async def get_train_smgs_list(db: Session = Depends(get_db)):
     train_list = db.query(models.Train).all()
     for train in train_list:
-        train.smgs_list = db.query(models.SMGS).filter(models.SMGS.train_id == train.id).all()
+        smgs_list = db.query(models.SMGS).filter(models.SMGS.train_id == train.id).all()
+        train.smgs_list = smgs_list
+        train.count = len(smgs_list)
     return train_list
 
 
@@ -70,4 +79,34 @@ async def delete_train(pk: int, db: Session = Depends(get_db)):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
+@router.get('zip/{pk}', status_code=status.HTTP_201_CREATED)
+async def create_zip(pk: int, smgs_type: Optional[str] = "", db: Session = Depends(get_db)):
+    train = Train.get_train(pk=pk, db=db)
+    if train is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f'Train with {pk} does not exist')
 
+    smgs_query = db.query(models.SMGS).filter(models.SMGS.train_id == pk)
+
+    io = BytesIO()
+    zip_sub_dir = train.name
+    zip_filename = "%s.zip" % zip_sub_dir
+    with zipfile.ZipFile(io, mode='w', compression=zipfile.ZIP_DEFLATED) as zip:
+        for smgs in smgs_query.all():
+            if smgs_type == 'draft':
+                draft_file = os.path.abspath(os.path.join(os.path.basename(__file__), '../' + smgs.file_draft))
+                zip.write(draft_file)
+            elif smgs_type == 'original':
+                original_file = os.path.abspath(os.path.join(os.path.basename(__file__), '../' + smgs.file_original))
+                zip.write(original_file)
+            else:
+                draft_file = os.path.abspath(os.path.join(os.path.basename(__file__), '../' + smgs.file_draft))
+                original_file = os.path.abspath(os.path.join(os.path.basename(__file__), '../' + smgs.file_original))
+                zip.write(draft_file)
+                zip.write(original_file)
+        zip.close()
+    return StreamingResponse(
+        iter([io.getvalue()]),
+        media_type="application/x-zip-compressed",
+        headers={"Content-Disposition": f"attachment;filename=%s" % zip_filename}
+    )
