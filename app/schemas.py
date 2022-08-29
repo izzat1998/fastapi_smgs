@@ -35,6 +35,8 @@ class SMGSBase(BaseModel):
     shipping_name: Union[str, None] = None
     container_owner: Union[str, None] = None
     container: Union[str, None] = None
+    container_type: Union[str, None] = None
+    container_type_code: Union[str, None] = None
     type_of_packaging: Union[str, None] = None
     number_of_seats: Union[str, None] = None
     net: Union[str, None] = None

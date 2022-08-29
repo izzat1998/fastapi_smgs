@@ -3,7 +3,6 @@ import zipfile
 from io import BytesIO
 from typing import List, Optional
 
-
 from fastapi import APIRouter, Depends
 
 from sqlalchemy.orm import Session
@@ -15,7 +14,6 @@ from .. import schemas, models
 
 from ..crud.train_crud import Train
 from ..database import get_db
-
 
 router = APIRouter(
     prefix='/api/v1/train',

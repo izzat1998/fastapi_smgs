@@ -33,15 +33,38 @@ class SMGS:
     @classmethod
     def add_smgs(cls, train_id: int, smgs: dict, db: Session = Depends(get_db)) -> models.SMGS:
         smgs_docx = {
-            "container": smgs["container"],
+
             "railway_code": smgs["railway_code"],
             "sender": smgs["sender"],
+            "departure_station": smgs["departure_station"],
+            "sender_statement":smgs["sender_statement"],
+            "recipient": smgs["recipient"],
+            "destination_station":smgs["destination_station"],
             "border_crossing_stations": smgs["border_crossing_stations"],
             "railway_carriage": smgs["railway_carriage"],
             "shipping_name": smgs["shipping_name"],
             "container_owner": smgs["container_owner"],
+            "container": smgs["container"],
+            "p": smgs["container_type_code"],
+            "type": smgs["container_type"],
             "type_of_packaging": smgs["type_of_packaging"],
-            "number_of_seats": smgs["number_of_seats"],
+            "net": smgs["net"],
+            "tara": smgs["tara"],
+            "gross": smgs["gross"],
+            "seals": smgs["seals"],
+            "seal_quantity": smgs["seal_quantity"],
+            "submerged": smgs["submerged"],
+            "method_of_determining_mass": smgs["method_of_determining_mass"],
+            "payment_of_legal_fees": smgs["payment_of_legal_fees"],
+            "carriers": smgs["carriers"],
+            "documents_by_sender": smgs["documents_by_sender"],
+            "additional_information": smgs["additional_information"],
+            "custom_seal": smgs["custom_seal"],
+            "inspector_name": smgs["inspector_name"],
+            "date": smgs["date"],
+
+
+
         }
         path = 'static/documents/'
         train = db.query(models.Train).filter(models.Train.id == train_id).first()

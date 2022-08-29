@@ -19,6 +19,8 @@ class SMGS(Base):
     shipping_name = Column(String, nullable=True)
     container_owner = Column(String, nullable=True)
     container = Column(String, nullable=True)
+    container_type = Column(String, nullable=True)
+    container_type_code = Column(String, nullable=True)
     type_of_packaging = Column(String, nullable=True)
     number_of_seats = Column(String, nullable=True)
     net = Column(String, nullable=True)

@@ -26,6 +26,4 @@ class SMGSDOCX:
         return str(draft_path).replace('app/', ''), str(original_path).replace('app/', '')
 
 
-def make_archive(train_name):
 
-    shutil.make_archive(train_name, 'zip', dirname)
