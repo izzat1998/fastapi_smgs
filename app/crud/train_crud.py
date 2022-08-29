@@ -2,6 +2,7 @@ import os
 from typing import Optional, List
 
 from fastapi import Depends
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from .smgs_crud import remove_file_from_disk
@@ -21,8 +22,8 @@ class Train:
         return new_train
 
     @classmethod
-    def get_all(cls, limit, skip, search, db: Session = Depends(get_db)) -> List[schemas.TrainOut]:
-        return db.query(cls.model).filter(cls.model.name.contains(search)).limit(limit).offset(skip).all()
+    def get_all(cls, limit: int, skip: int, search: str, db: Session = Depends(get_db)) -> List[schemas.TrainOut]:
+        return db.query(cls.model).filter(cls.model.name.ilike(f'%{search.lower()}%')).limit(limit).offset(skip).all()
 
     @classmethod
     def get_train(cls, pk: int, db: Session = Depends(get_db)) -> Optional[models.Train]:
