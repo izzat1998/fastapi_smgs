@@ -106,11 +106,12 @@ async def create_zip(pk: int, smgs_type: Optional[str] = "", db: Session = Depen
                 zip.write(draft_file)
                 zip.write(original_file)
         zip.close()
-    return StreamingResponse(
-        iter([io.getvalue()]),
-        media_type="application/x-zip-compressed",
-        headers={"Content-Disposition": f"attachment;filename=%s" % zip_filename}
-    )
+        return StreamingResponse(
+            iter([io.getvalue()]),
+            media_type="application/x-zip-compressed",
+            headers={
+                "Content-Disposition": f"attachment;filename={zip_filename}_{'all' if smgs_type =='' else smgs_type}"}
+        )
 
 
 @router.post("/uploadfile/", status_code=status.HTTP_201_CREATED)
