@@ -109,7 +109,7 @@ async def create_zip(pk: int, smgs_type: Optional[str] = "", db: Session = Depen
     return StreamingResponse(
         iter([io.getvalue()]),
         media_type="application/x-zip-compressed",
-        headers={"Content-Disposition": f"attachment;filename=%s.zip" % zip_filename}
+        headers={"Content-Disposition": f"attachment;filename=%s" % zip_filename}
     )
 
 
