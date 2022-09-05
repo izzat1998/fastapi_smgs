@@ -1,9 +1,12 @@
 import os
 import zipfile
+import shutil
+
 from io import BytesIO
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile
+from h11._abnf import status_code
 
 from sqlalchemy.orm import Session
 from starlette import status
@@ -108,3 +111,22 @@ async def create_zip(pk: int, smgs_type: Optional[str] = "", db: Session = Depen
         media_type="application/x-zip-compressed",
         headers={"Content-Disposition": f"attachment;filename=%s" % zip_filename}
     )
+
+
+@router.post("/uploadfile/", status_code=status.HTTP_201_CREATED)
+async def create_upload_file(pk: int, file: UploadFile, db: Session = Depends(get_db)):
+    train = Train.get_train(pk=pk, db=db)
+    if train is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f'Train with {pk} does not exist')
+    try:
+        with open(f"./static/excel_files/{train.name}.xlsx", "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        train.excel_file = f'/static/excel_files/{train.name}.xlsx'
+        db.add(train)
+        db.commit()
+        db.refresh(train)
+    except Exception:
+        HTTPException(status_code=status.INTERNAL_SERVER_ERROR)
+
+    return {"filename": file.filename}

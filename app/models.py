@@ -50,3 +50,4 @@ class Train(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, unique=True)
+    excel_file = Column(String, nullable=True)

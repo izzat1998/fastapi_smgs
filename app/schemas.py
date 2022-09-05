@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 class TrainBase(BaseModel):
     name: str
+    excel_file: Union[str, None] = None
 
 
 class TrainCreate(TrainBase):
