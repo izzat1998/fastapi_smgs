@@ -91,7 +91,7 @@ async def create_zip(pk: int, smgs_type: Optional[str] = "", db: Session = Depen
 
     io = BytesIO()
     zip_sub_dir = train.name
-    zip_filename = "%s.zip" % zip_sub_dir
+    zip_filename = "%s" % zip_sub_dir
     with zipfile.ZipFile(io, mode='w', compression=zipfile.ZIP_DEFLATED) as zip:
         for smgs in smgs_query.all():
             if smgs_type == 'draft':
@@ -110,7 +110,7 @@ async def create_zip(pk: int, smgs_type: Optional[str] = "", db: Session = Depen
             iter([io.getvalue()]),
             media_type="application/x-zip-compressed",
             headers={
-                "Content-Disposition": f"attachment;filename={zip_filename}_{'all' if smgs_type =='' else smgs_type}"}
+                "Content-Disposition": f"attachment;filename={zip_filename}_{'all' if smgs_type == '' else smgs_type}.zip"}
         )
 
 
