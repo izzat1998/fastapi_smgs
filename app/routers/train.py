@@ -24,12 +24,12 @@ router = APIRouter(
 )
 
 
-@router.get('/', response_model=List[schemas.TrainOut])
+@router.get('/', response_model=List[schemas.TrainMainOut])
 async def get_train_list(limit: int = 100, skip: int = 0, search: Optional[str] = "", db: Session = Depends(get_db)):
     train_list = Train.get_all(limit=limit, skip=skip, search=search, db=db)
     for train in train_list:
         smgs_list = db.query(models.SMGS).filter(models.SMGS.train_id == train.id).all()
-        train.count = len(smgs_list)
+        train.smgs_count = len(smgs_list)
     return train_list
 
 

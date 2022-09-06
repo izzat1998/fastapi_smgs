@@ -24,6 +24,14 @@ class TrainOut(TrainBase):
         orm_mode = True
 
 
+class TrainMainOut(TrainBase):
+    id: int
+    smgs_count: int = 0
+
+    class Config:
+        orm_mode = True
+
+
 class SMGSBase(BaseModel):
     railway_code: Union[str, None] = None
     sender: Union[str, None] = None
