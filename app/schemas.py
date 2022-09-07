@@ -6,7 +6,6 @@ from pydantic import BaseModel
 
 class TrainBase(BaseModel):
     name: str
-    excel_file: Union[str, None] = None
 
 
 class TrainCreate(TrainBase):
@@ -19,6 +18,7 @@ class TrainUpdate(TrainBase):
 
 class TrainOut(TrainBase):
     id: int
+    excel_file: Union[str, None] = None
 
     class Config:
         orm_mode = True
@@ -27,6 +27,7 @@ class TrainOut(TrainBase):
 class TrainMainOut(TrainBase):
     id: int
     smgs_count: int = 0
+    excel_file: Union[str, None] = None
 
     class Config:
         orm_mode = True
