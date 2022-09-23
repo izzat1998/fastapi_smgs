@@ -41,7 +41,6 @@ class SMGS(Base):
     file_original = Column(String, nullable=True)
     train_id = Column(Integer, ForeignKey('trains.id', ondelete='CASCADE'), nullable=True)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
-
     train = relationship("Train")
 
 
@@ -51,3 +50,4 @@ class Train(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, unique=True)
     excel_file = Column(String, nullable=True)
+    user_id = Column(Integer, nullable=True, default=2)

@@ -9,7 +9,6 @@ class Settings(BaseSettings):
     database_username: str
 
     class Config:
-
         env_file = '.env'
 
 

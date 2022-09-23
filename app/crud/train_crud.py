@@ -14,16 +14,26 @@ class Train:
     model = models.Train
 
     @classmethod
-    def add_train(cls, train_name: str, db: Session = Depends(get_db)) -> schemas.TrainOut:
-        new_train = cls.model(name=train_name)
+    def add_train(cls, train_name: str, user_id: int, db: Session = Depends(get_db)) -> schemas.TrainOut:
+        new_train = cls.model(name=train_name, user_id=user_id)
         db.add(new_train)
         db.commit()
         db.refresh(new_train)
         return new_train
 
     @classmethod
-    def get_all(cls, limit: int, skip: int, search: str, db: Session = Depends(get_db)) -> List[schemas.TrainOut]:
-        return db.query(cls.model).filter(cls.model.name.ilike(f'%{search.lower()}%')).limit(limit).offset(skip).all()
+    def get_all(cls, limit: int, skip: int, search: str, db: Session = Depends(get_db)) -> List[
+        schemas.TrainOut]:
+        return db.query(cls.model).filter(cls.model.name.ilike(f'%{search.lower()}%')).limit(
+            limit).offset(skip).all()
+
+    @classmethod
+    def get_all_by_user(cls, user_id: int, limit: int, skip: int, search: str, db: Session = Depends(get_db)) -> List[
+        schemas.TrainOut]:
+        return db.query(cls.model).filter(cls.model.user_id == user_id,
+                                          cls.model.name.ilike(f'%{search.lower()}%')).limit(
+            limit).offset(skip).all()
+
 
     @classmethod
     def get_train(cls, pk: int, db: Session = Depends(get_db)) -> Optional[models.Train]:

@@ -6,8 +6,8 @@ from io import BytesIO
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, UploadFile
-from h11._abnf import status_code
 
+from starlette import status
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.exceptions import HTTPException
@@ -33,13 +33,23 @@ async def get_train_list(limit: int = 100, skip: int = 0, search: Optional[str] 
     return train_list
 
 
+@router.get('/users/{user_id}', response_model=List[schemas.TrainMainOut])
+async def get_train_list(user_id: int, limit: int = 100, skip: int = 0, search: Optional[str] = "",
+                         db: Session = Depends(get_db)):
+    train_list = Train.get_all_by_user(user_id=user_id, limit=limit, skip=skip, search=search, db=db)
+    for train in train_list:
+        smgs_list = db.query(models.SMGS).filter(models.SMGS.train_id == train.id).all()
+        train.smgs_count = len(smgs_list)
+    return train_list
+
+
 @router.post('/', response_model=schemas.TrainOut)
 async def create_train(train: schemas.TrainCreate, db: Session = Depends(get_db)):
     if Train.get_train_by_name(train.dict().get('name'), db=db) is not None:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail=f"Already exists train with {train.dict().get('name')}"
         )
-    new_train = Train.add_train(train.dict().get('name'), db=db)
+    new_train = Train.add_train(train.dict().get('name'), train.dict().get('user_id'), db=db)
     return new_train
 
 
