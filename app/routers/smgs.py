@@ -44,7 +44,7 @@ async def create_smgs(smgs: schemas.SMGSCreate, db: Session = Depends(get_db)):
     train_name = smgs.pop('train_name')
     train = Train.get_train_by_name(train_name, db)
     if train is None:
-        train = Train.add_train(train_name, db)
+        train = Train.add_train(train_name, 1, db)
     new_smgs = SMGS.add_smgs(train.id, smgs, db)
     return new_smgs
 

@@ -145,7 +145,8 @@ def test_get_one_smgs_not_exist(client, test_smgs):
         "inspector_name": "inspector_name",
         "date": "2022/16/8",
         "train_name": "Train 2"
-    }, {
+    },
+    {
         "railway_code": "12346",
         "sender": "sender",
         "departure_station": "departure_station",
