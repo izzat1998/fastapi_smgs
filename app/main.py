@@ -20,6 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 app.mount("/smgs/static", StaticFiles(directory="static"), name="static")
 app.include_router(smgs.router, prefix="/api/v1/smgs/smgs")
 app.include_router(train.router, prefix="/api/v1/smgs/train")
