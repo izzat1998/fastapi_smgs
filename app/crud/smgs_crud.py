@@ -37,9 +37,9 @@ class SMGS:
             "railway_code": smgs["railway_code"],
             "sender": smgs["sender"],
             "departure_station": smgs["departure_station"],
-            "sender_statement":smgs["sender_statement"],
+            "sender_statement": smgs["sender_statement"],
             "recipient": smgs["recipient"],
-            "destination_station":smgs["destination_station"],
+            "destination_station": smgs["destination_station"],
             "border_crossing_stations": smgs["border_crossing_stations"],
             "railway_carriage": smgs["railway_carriage"],
             "shipping_name": smgs["shipping_name"],
@@ -62,8 +62,6 @@ class SMGS:
             "custom_seal": smgs["custom_seal"],
             "inspector_name": smgs["inspector_name"],
             "date": smgs["date"],
-
-
 
         }
         path = 'static/documents/'

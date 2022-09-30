@@ -19,7 +19,6 @@ from ..crud.train_crud import Train
 from ..database import get_db
 
 router = APIRouter(
-    prefix='/api/v1/train',
     tags=['Train']
 )
 

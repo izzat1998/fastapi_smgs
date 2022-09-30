@@ -1,12 +1,14 @@
 import os
 
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 
 from .routers import smgs, train
 
-app = FastAPI()
+app = FastAPI(
+    title='SMGS', openapi_url="/api/v1/smgs/openapi.json",
+    docs_url="/api/v1/smgs/docs")
 
 origins = ["*"]
 
@@ -18,6 +20,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-app.include_router(smgs.router)
-app.include_router(train.router)
+app.mount("/smgs/static", StaticFiles(directory="static"), name="static")
+app.include_router(smgs.router, prefix="/api/v1/smgs/smgs")
+app.include_router(train.router, prefix="/api/v1/smgs/train")
